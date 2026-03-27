@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NQT Recommendation System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .container {
+            background: white;
+            color: black;
+            padding: 30px;
+            border-radius: 15px;
+            width: 380px;
+            margin: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        input {
+            padding: 10px;
+            width: 80%;
+            margin: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        .result {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .card {
+            background: #f3f3f3;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+        }
+
+        .weak {
+            background: #ffe5e5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            color: gray;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎯 NQT Test Recommendation System</h1>
+
+    <div class="container">
+
+        <input type="number" id="userId" placeholder="Enter User ID (1-30)" />
+        <br>
+
+        <button onclick="getRecommendations()">Get Recommendations</button>
+
+        <div class="result" id="result"></div>
+
+    </div>
+
+    <script>
+        async function getRecommendations() {
+            const userId = document.getElementById("userId").value;
+            const resultDiv = document.getElementById("result");
+
+            // Input validation
+            if (!userId) {
+                resultDiv.innerHTML = "<p style='color:red;'>⚠️ Please enter a User ID</p>";
+                return;
+            }
+
+            resultDiv.innerHTML = "<p class='loading'>⏳ Loading recommendations...</p>";
+
+            try {
+                const response = await fetch(`/recommend/${userId}`);
+                const data = await response.json();
+
+                let output = "";
+
+                // 🔴 Weak Areas
+                output += `<div class="weak"><b>📊 Weak Areas:</b><br>`;
+                output += data.weak_areas.length 
+                    ? data.weak_areas.join(", ") 
+                    : "None 🎉";
+                output += `</div>`;
+
+                // 🎯 Recommendations
+                output += `<h3>🎯 Recommended Tests:</h3>`;
+
+                if (data.recommended_tests.length === 0) {
+                    output += "<p>No recommendations found</p>";
+                } else {
+                    data.recommended_tests.forEach(test => {
+                        output += `<div class="card">📘 ${test}</div>`;
+                    });
+                }
+
+                // 💡 Reason
+                output += `<p><i>💡 ${data.reason}</i></p>`;
+
+                resultDiv.innerHTML = output;
+
+            } catch (error) {
+                resultDiv.innerHTML = "<p style='color:red;'>❌ Error fetching recommendations</p>";
+            }
+        }
+    </script>
+
+</body>
+</html>
