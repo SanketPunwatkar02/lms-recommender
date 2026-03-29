@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, send_from_directory, request
-from recommender import recommend_tests, add_user_data, get_test_options
+from .recommender import recommend_tests, add_user_data, get_test_options
 import json
 
 app = Flask(__name__)
