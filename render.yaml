@@ -9,11 +9,7 @@ services:
     plan: starter
     runtime: python3.8
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python app.py"
-    envVars:
-      - key: DATABASE_URL
-        value: your_database_url_here
-      - key: ANOTHER_ENV_VAR
-        value: another_value_here
+    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
+    envVars: []
     autoDeploy: true
     region: oregon
