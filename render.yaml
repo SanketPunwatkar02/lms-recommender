@@ -1,0 +1,19 @@
+# Render Configuration for LMS Recommender
+
+# This file is used to configure the deployment of the LMS Recommender on Render.
+
+services:
+  - type: web
+    name: lms-recommender
+    env: python
+    plan: starter
+    runtime: python3.8
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    envVars:
+      - key: DATABASE_URL
+        value: your_database_url_here
+      - key: ANOTHER_ENV_VAR
+        value: another_value_here
+    autoDeploy: true
+    region: oregon
