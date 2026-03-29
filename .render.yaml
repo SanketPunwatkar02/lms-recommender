@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: lms-recommender
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app.main:app --workers 3 --bind 0.0.0.0:$PORT"
+    autoDeploy: true
+    branch: main
