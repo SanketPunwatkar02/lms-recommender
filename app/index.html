@@ -872,10 +872,17 @@
         async function loadTestOptions() {
             try {
                 const response = await fetch('/test-options');
+                if (!response.ok) {
+                    throw new Error(`Error loading test options: ${response.status} ${response.statusText}`);
+                }
                 testOptions = await response.json();
+                if (!testOptions || !testOptions.tests) {
+                    throw new Error('Invalid test options format received');
+                }
                 createTestInputFields();
             } catch (error) {
                 console.error('Error loading test options:', error);
+                document.getElementById('testInputContainer').innerHTML = `<div class="result-card error"><h3><i class="fas fa-exclamation-triangle"></i> Unable to load test options</h3><p>${error.message}</p></div>`;
             }
         }
 
@@ -976,6 +983,11 @@
                     })
                 });
 
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Server error ${response.status}: ${response.statusText} - ${text}`);
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -985,7 +997,7 @@
                     // Automatically get recommendations for the new user
                     await getRecommendationsForNewUser(currentUserId);
                 } else {
-                    throw new Error(result.error);
+                    throw new Error(result.error || 'Unknown error');
                 }
 
             } catch (error) {
@@ -1012,12 +1024,20 @@
 
             try {
                 const response = await fetch(`/recommend/${userId}`);
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`API Error ${response.status}: ${response.statusText} - ${text}`);
+                }
                 const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
 
                 displayResults(data);
 
             } catch (error) {
-                showError("Error fetching recommendations. Please try again.");
+                showError("Error fetching recommendations. " + error.message);
             }
         }
 
@@ -1045,12 +1065,20 @@
 
             try {
                 const response = await fetch(`/recommend/${userId}`);
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`API Error ${response.status}: ${response.statusText} - ${text}`);
+                }
                 const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
 
                 displayResults(data);
 
             } catch (error) {
-                showError("Error fetching recommendations. Please try again.");
+                showError("Error fetching recommendations. " + error.message);
             } finally {
                 // Re-enable button
                 submitBtn.disabled = false;
