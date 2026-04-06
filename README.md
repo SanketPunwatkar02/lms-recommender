@@ -64,4 +64,4 @@ POST /api/login
 - Render for deployment
 
 ## Live Demo
-Check out the live demo at [Live Demo Link](https://yourlmsdemo.com)
+Check out the live demo at [Live Demo Link](https://lms-recommenderonrender.com)
